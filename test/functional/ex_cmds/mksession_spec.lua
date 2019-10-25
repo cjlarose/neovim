@@ -5,6 +5,7 @@ local clear = helpers.clear
 local command = helpers.command
 local get_pathsep = helpers.get_pathsep
 local eq = helpers.eq
+local ok = helpers.ok
 local funcs = helpers.funcs
 local rmdir = helpers.rmdir
 
@@ -69,5 +70,24 @@ describe(':mksession', function()
     eq(cwd_dir .. get_pathsep() .. tmpfile_base .. '1', funcs.expand('%:p'))
     command('tabnext 2')
     eq(cwd_dir .. get_pathsep() .. tmpfile_base .. '2', funcs.expand('%:p'))
+  end)
+
+  it('restores the cwd of processes in terminal buffers', function()
+    local cwd_dir = funcs.getcwd()
+    local session_path = cwd_dir .. get_pathsep() .. session_file
+
+    command('cd ' .. tab_dir)
+    command('terminal ' .. 'echo $PWD')
+    command('cd ' .. cwd_dir)
+    command('mksession ' .. session_path)
+
+    clear()
+
+    command('silent source ' .. session_path)
+
+    local expected_dir = cwd_dir .. get_pathsep() .. tab_dir
+    local expected_dir_pattern, _ = expected_dir:gsub('%.', '%%.'):gsub('%-', '%%-')
+
+    ok(nil ~= funcs.expand('%:p'):find(expected_dir_pattern))
   end)
 end)

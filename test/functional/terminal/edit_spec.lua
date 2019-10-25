@@ -1,3 +1,4 @@
+local lfs = require('lfs')
 local helpers = require('test.functional.helpers')(after_each)
 local screen = require('test.functional.ui.screen')
 
@@ -28,7 +29,8 @@ describe(':edit term://*', function()
     command('edit term://')
     local termopen_runs = meths.get_var('termopen_runs')
     eq(1, #termopen_runs)
-    eq(termopen_runs[1], termopen_runs[1]:match('^term://.//%d+:$'))
+    local cwd = lfs.currentdir()
+    eq(termopen_runs[1], termopen_runs[1]:match('^term://' .. cwd .. '//%d+:$'))
   end)
 
   it("runs TermOpen early enough to set buffer-local 'scrollback'", function()

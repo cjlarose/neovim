@@ -18277,9 +18277,12 @@ static void f_termopen(typval_T *argvars, typval_T *rettv, FunPtr fptr)
 
   int pid = chan->stream.pty.process.pid;
 
-  char buf[1024];
+  char cwd_full_path[MAXPATHL];
+  vim_FullName(cwd, cwd_full_path, sizeof(cwd_full_path), false);
+
+  char buf[8192];
   // format the title with the pid to conform with the term:// URI
-  snprintf(buf, sizeof(buf), "term://%s//%d:%s", cwd, pid, cmd);
+  snprintf(buf, sizeof(buf), "term://%s//%d:%s", cwd_full_path, pid, cmd);
   // at this point the buffer has no terminal instance associated yet, so unset
   // the 'swapfile' option to ensure no swap file will be created
   curbuf->b_p_swf = false;

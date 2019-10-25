@@ -153,11 +153,6 @@ before_script:  ci/before_script.sh
 script:         ci/script.sh
 before_cache:   ci/before_cache.sh
 
-branches:
-  only:
-    - master
-    - /^release-\d+\.\d+$/
-
 cache:
   apt: true
   ccache: true
